@@ -16,7 +16,7 @@ mod data_mysql {
         use mysql::*;
         use mysql::prelude::*;
 
-        let url = "mysql://soil:Test1234@localhost:3307/SoilTest1";
+        let url = "mysql://USER:PASSWORD@localhost/DATABASE";
         let pool = Pool::new(url)?;
         let mut conn = pool.get_conn()?;
    
