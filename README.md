@@ -1,7 +1,7 @@
 # Soil-i2c
 A tool to measure soil moisture from Adafruit STEMMA Soil Sensors, with support for I2C multiplexer chips built in, as well as support for MySQL and planned future support for Sqlite, PostgreSQL, and ODBC.
 
-# Project Design
+## About the Project/DIY Components
 If you'd like to replicate the project I'm creating, you'll need the following components:
 
 * 1 Raspberry Pi 3B+ board
