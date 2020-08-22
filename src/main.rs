@@ -1,42 +1,19 @@
-extern crate mysql;
-
 mod soil_lib;
+mod data;
 
-pub use crate::soil_lib::i2conn;
-pub use crate::soil_lib::stemconn;
+pub use crate::soil_lib::i2conn::muxer;
+pub use crate::soil_lib::stemconn::{sensetemp, sensecap};
+pub use crate::data::d_mysql::{init, insert};
 
-//data_mysql: I'm planning to rename this module and put more SQL server options in
-//here in the future. I'll likely also move it into its own library file as well and
-//make modules for MySQL/Postgres/Microsoft SQL Server/etc.
-mod data_mysql {
-    //insert: Literally all it does is connect and insert. Planning on setting it to
-    //grab the server URL from a config file at some point, though hardcoding it could
-    //be more secure.
-    pub fn insert(plnum: u8, tempwrite: f32, moistwrite: u16) -> Result<(), mysql::Error> {
-        use mysql::*;
-        use mysql::prelude::*;
+pub const SERVER_URL: &str = "mysql://USER:PASSWORD@localhost/DATABASE";
 
-        let url = "mysql://USER:PASSWORD@localhost/DATABASE";
-        let pool = Pool::new(url)?;
-        let mut conn = pool.get_conn()?;
-   
-        let plantno = format!("Plant {}", plnum);
-        
-        conn.exec_drop(
-            r"INSERT INTO SoilData (Plant,Readtime,Moisture,Temperature) VALUES (?,CURRENT_TIME,?,?)", (plantno, moistwrite, tempwrite)
-        )?;
-
-        Ok(())
-    }
-}
-//mx_channel: This is basically just an alias for the i2conn::muxer function that 
-//handles the error. (Look at me, handling errors like a normal programmer :P)
+//plant_name: Just a small function to construct a name for the plant to insert
+//into the database. I'm just using a basic numbering system, but a case statement
+//could be used to give unique names to plants based on the value of i in main.
 //
-fn mx_channel(channel: u8) {
-    match i2conn::muxer(channel) {
-        Ok(n) => n,
-        Err(err) => println!("Error communicating with multiplexer!: {}", err),
-    }
+fn plant_name (num: u8) -> String {
+    let plname: String = format!("Plant {}", num);
+    return plname;
 }
 
 //main: Wraps the whole thing together. Using two constraint variables as my
@@ -48,24 +25,30 @@ fn main() {
     let mut temp: f32;
     let mut cap: u16;
 
-    let ports_begin: u8 = 1;
-    let ports_end: u8 = 2;
+    let plant_begin: u8 = 1;
+    let plant_end: u8 = 2;
     
-    for r in 1..11 {
-        println!("Pass #{}:",r);
-        for i in ports_begin..ports_end + 1 {
-            mx_channel(i);
-            println!("\nSwitching to multiplex port {}: \n\n", i);
-        
-            temp = stemconn::sensetemp(500);
-            cap = stemconn::sensecap(500);
-            println!("Temperature: {}\nCapacitance: {}\n", temp, cap);
+    let mut conn = init(SERVER_URL);
+
+    for i in plant_begin..plant_end + 1 {
+        let name = plant_name(i);
+
+        match muxer(i) {
+            Ok(n) => n,
+            Err(err) => println!("Error communicating with multiplexer!: {}", err),
+        };  
+
+        println!("\nSwitching to multiplex port {}: \n\n", i);
+
+        temp = sensetemp(500);
+        cap = sensecap(500);
+
+        println!("Temperature: {}\nCapacitance: {}\n", temp, cap);
             
-            println!("Writing to database...");
-            match data_mysql::insert(i, temp, cap) {
-               Ok(m) => m,
-               Err(err) => println!("Error writing to database!!! {}", err),
-            }
+        println!("Writing to database...");
+        match insert(&mut conn, name, temp, cap) {
+           Ok(m) => m,
+           Err(err) => println!("Error writing to database!!! {}", err),
         }
     }
 }
