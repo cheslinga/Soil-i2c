@@ -6,7 +6,7 @@ If you'd like to replicate the project I'm creating, you'll need the following c
 
 * 1 Raspberry Pi 3B+ board
 * 1 or more Adafruit STEMMA Soil Sensors
-* 1 Adafruit JST PH 4-Pin to Male Header cable **PER SENSOR** *(though you could maybe work around this)*
+* 1 Adafruit JST PH 4-Pin to Male Header cable **PER SENSOR** *(though you could maybe work around this with regular wire)*
 * *OPTIONAL:* An Adafruit TCA9548A I2C Multiplexer, if you plan on reading from many sensors like me
 * *OPTIONAL:* A MySQL or MariaDB database with the following CREATE TABLE:
   * ID int AUTO_INCREMENT NOT NULL,
