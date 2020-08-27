@@ -20,4 +20,25 @@ Depending on what you'd like to do with the program, pretty much everything you 
 
 Currently for MySQL integration, the server URL needs to be hardcoded, so you'll have to change it up depending on what your own URL is. (line 19 in main.rs)
 I plan to change this to a config file in the future when the project gets closer to a decent release state.
+
+
+
+
+
+
+## Attribution
+This software makes use of several external libraries as dependencies. While such dependencies have not been redistributed in this repository in source form, the copyright information for this program's dependencies is listed below, and each is licensed under the MIT License unless otherwise specified.
+
+**embedded-hal & linux-embedded-hal**
+<br>*Copyright (c) 2017-2018 Jorge Aparicio*
+
+**rppal**
+<br>*Copyright (c) 2017-2020 Rene van der Meer*
+
+**stemma-soil-sensor**
+<br>*Copyright (c) 2020 Carl Fredrik Samson*
+
+**mysql**
+<br>*Copyright (c) 2020 rust-mysql-common contributors*
+
     
