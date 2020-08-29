@@ -16,39 +16,42 @@ fn plant_name (num: u8) -> String {
     return plname;
 }
 
-//main: Wraps the whole thing together. Using two constraint variables as my
-//sentinel values for swapping multiplexer ports. Takes 10 readings for each
-//port in the range of my constraints, fetching both the temperature and 
-//capacitance values at a 500ms delay, and prints them both out on one line.
+//read_plant: Pulls in a plant name (usually made via plant_name) and makes the
+//connection to the SQL server. Creates two variables from sensing the temperature
+//and capacitance, prints them, then writes them plus their name to the database
+//that it connected to.
 //
-fn main() {
-    let mut temp: f32;
-    let mut cap: u16;
-
-    let plant_begin: u8 = 1;
-    let plant_end: u8 = 2;
-    
+fn read_plant(name: String) {
     let mut conn = init(SERVER_URL);
 
-    for i in plant_begin..plant_end + 1 {
-        let name = plant_name(i);
+    let temp:f32 = sensetemp(500);
+    let cap:u16 = sensecap(500);
 
-        match muxer(i) {
-            Ok(n) => n,
-            Err(err) => println!("Error communicating with multiplexer!: {}", err),
-        };  
-
-        println!("\nSwitching to multiplex port {}: \n\n", i);
-
-        temp = sensetemp(500);
-        cap = sensecap(500);
-
-        println!("Temperature: {}\nCapacitance: {}\n", temp, cap);
+    println!("Temperature: {}\nCapacitance: {}\n", temp, cap);
             
-        println!("Writing to database...");
-        match insert(&mut conn, name, temp, cap) {
-           Ok(m) => m,
-           Err(err) => println!("Error writing to database!!! {}", err),
-        }
+    println!("Writing to database...");
+    match insert(&mut conn, name, temp, cap) {
+       Ok(m) => m,
+       Err(err) => println!("Error writing to database!!! {}", err),
+    };
+}
+
+//run: Created this function to make things more functional and extensible, and because 
+//not everybody will elect to run with a multiplexer. This just takes a range between two
+//numbers, switches to that numbered multiplexer port, and sends that plant data to the 
+//database.
+//
+fn run(plant_begin:u8, plant_end:u8) {
+    for i in plant_begin..plant_end + 1 {
+        muxer(i);
+        read_plant(plant_name(i));
     }
+}
+
+//main: Made main super simple for extensibility and to try and use functional programming
+//wherever possible. This way you could add in a scheduler crate and set the run function
+//to happen at certain times, or have things that happen between runs, etc.
+//
+fn main() {
+    run(1,3);
 }
