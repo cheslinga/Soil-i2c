@@ -7,17 +7,19 @@ pub mod i2conn {
     //muxer: Writes a single byte to the first register of the multiplexer,
     //changing the port that it will be listening on.
     //
-    pub fn muxer(channel: u8) -> Result<(), rppal::i2c::Error> {
+    pub fn muxer(channel: u8) {
         use soil_lib::rppal::i2c::I2c;
         const MUXADDR: u16 = 0x70;
 
-        let mut mdev = I2c::new()?;
-        mdev.set_slave_address(MUXADDR)?;
+        let mut mdev = I2c::new().unwrap();
+        mdev.set_slave_address(MUXADDR).unwrap();
 
         let channelbyte = &[0u8, channel];
-        mdev.write(channelbyte)?;
-
-        Ok(())
+        
+        match mdev.write(channelbyte) {
+            Ok(_m) => (),
+            Err(err) => println!("Error communicating with multiplexer! {}", err),
+        };
     }
 }
 
