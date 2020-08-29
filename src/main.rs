@@ -30,12 +30,8 @@ fn read_plant(name: String) {
     println!("Temperature: {}\nCapacitance: {}\n", temp, cap);
             
     println!("Writing to database...");
-    match insert(&mut conn, name, temp, cap) {
-       Ok(m) => m,
-       Err(err) => println!("Error writing to database!!! {}", err),
-    };
+    insert(&mut conn, name, temp, cap);
 }
-
 //run: Created this function to make things more functional and extensible, and because 
 //not everybody will elect to run with a multiplexer. This just takes a range between two
 //numbers, switches to that numbered multiplexer port, and sends that plant data to the 

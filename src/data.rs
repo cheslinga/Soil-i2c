@@ -20,7 +20,7 @@ pub mod d_mysql {
     //into it. You could modify it based on what your database looks like/what
     //you want to see.
     //
-    pub fn insert(conn: &mut mysql::PooledConn, plname: String, tempwrite: f32, moistwrite: u16) -> Result<(), mysql::Error> {
+    pub fn insert(conn: &mut mysql::PooledConn, plname: String, tempwrite: f32, moistwrite: u16) {
         use data::mysql::*;
         use data::mysql::prelude::*;
 
@@ -30,7 +30,5 @@ pub mod d_mysql {
             Ok(m) => m,
             Err(err) => println!("Error processing MySQL query! {}", err),
         };
-
-        Ok(())
     }
 }
