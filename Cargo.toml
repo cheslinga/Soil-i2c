@@ -1,6 +1,6 @@
 [package]
 name = "soil-i2c"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Cole Heslinga <cole.heslinga@gmail.com>"]
 
 [dependencies]
@@ -9,3 +9,4 @@ embedded-hal = "0.2.4"
 rppal = "0.11.3"
 linux-embedded-hal = "0.3.0"
 mysql = "19.0.0"
+
