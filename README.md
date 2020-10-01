@@ -21,10 +21,13 @@ Depending on what you'd like to do with the program, pretty much everything you 
 Currently for MySQL integration, the server URL needs to be hardcoded, so you'll have to change it up depending on what your own URL is. (line 19 in main.rs)
 I plan to change this to a config file in the future when the project gets closer to a decent release state.
 
-
-
-
-
+## To-Do List
+* Set the program to run on a defined schedule
+* Add support for other databases (Sqlite, ODBC, Postgre)
+* Add built-in database/table creation scripts
+* Move most user-defined things into a config file (server connection string, frequency of readings, etc.)
+ * Possibly add a config-mode or first-time-setup argument to the program to allow for easy setup of the config file
+* Look into adding optional distribution of data via OPC or Modbus
 
 ## Attribution
 This software makes use of several external libraries as dependencies. While such dependencies have not been redistributed in this repository in source form, the copyright information for this program's dependencies is listed below, and each is licensed under the MIT License unless otherwise specified.
